@@ -6,7 +6,7 @@ const input = props => {
   let inputElement = null;
   const inputClasses = [classes.InputElement];
 
-  if (!props.validated) {
+  if (!props.validated && props.touched) {
     inputClasses.push(classes.Invalid);
   }
 

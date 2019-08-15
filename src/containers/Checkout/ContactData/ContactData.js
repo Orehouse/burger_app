@@ -11,12 +11,44 @@ import classes from "./ContactData.module.css";
 
 class ContactData extends Component {
   state = {
-    name: "",
-    email: "",
-    address: {
-      street: "",
-      zip: ""
+    orderForm: {
+      name: {
+        elementType: "input",
+        elementConfig: { type: "text", placeholder: "Your Name" },
+        value: ""
+      },
+      street: {
+        elementType: "input",
+        elementConfig: { type: "text", placeholder: "Your Street" },
+        value: ""
+      },
+      zip: {
+        elementType: "input",
+        elementConfig: { type: "text", placeholder: "Your Zip" },
+        value: ""
+      },
+      country: {
+        elementType: "input",
+        elementConfig: { type: "text", placeholder: "Your Country" },
+        value: ""
+      },
+      email: {
+        elementType: "input",
+        elementConfig: { type: "email", placeholder: "Your Email" },
+        value: ""
+      },
+      deliveryMethod: {
+        elementType: "select",
+        elementConfig: {
+          options: [
+            { value: "fastest", displayValue: "Fastest" },
+            { value: "cheapest", displayValue: "Cheapest" }
+          ]
+        },
+        value: ""
+      }
     },
+
     totalPrice: 0,
     loading: false
   };
@@ -28,16 +60,7 @@ class ContactData extends Component {
 
     const order = {
       ingredients: this.props.ingredients,
-      price: this.props.price,
-      customer: {
-        name: "Artem",
-        address: {
-          street: "My Street",
-          zip: "12345",
-          country: "RU"
-        },
-        email: "orehouse@test.ru"
-      }
+      price: this.props.price
     };
     axios
       .post("orders.json", order)
@@ -51,12 +74,23 @@ class ContactData extends Component {
   };
 
   render() {
+    const formElements = [];
+    for (let key in this.state.orderForm) {
+      formElements.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    }
     let form = (
       <form>
-        <Input inputtype="input" placeholder={"Name"} name={"name"} />
-        <Input inputtype="input" placeholder={"Email"} name={"email"} />
-        <Input inputtype="input" placeholder={"Street"} name={"street"} />
-        <Input inputtype="input" placeholder={"Zip"} name={"zip"} />
+        {formElements.map(formElement => (
+          <Input
+            key={formElement.id}
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+          />
+        ))}
         <Button btnType={"Success"} clicked={this.orderHandler}>
           ORDER
         </Button>

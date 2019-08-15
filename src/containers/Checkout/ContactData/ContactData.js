@@ -3,7 +3,10 @@ import { withRouter } from "react-router-dom";
 
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
+import Input from "../../../components/UI/Input/Input";
+
 import axios from "../../../axios-orders";
+
 import classes from "./ContactData.module.css";
 
 class ContactData extends Component {
@@ -50,30 +53,10 @@ class ContactData extends Component {
   render() {
     let form = (
       <form>
-        <input
-          type="text"
-          placeholder={"Name"}
-          name={"name"}
-          className={classes.Input}
-        />
-        <input
-          type="email"
-          placeholder={"Email"}
-          name={"email"}
-          className={classes.Input}
-        />
-        <input
-          type="text"
-          placeholder={"Street"}
-          name={"street"}
-          className={classes.Input}
-        />
-        <input
-          type="text"
-          placeholder={"Zip"}
-          name={"zip"}
-          className={classes.Input}
-        />
+        <Input inputtype="input" placeholder={"Name"} name={"name"} />
+        <Input inputtype="input" placeholder={"Email"} name={"email"} />
+        <Input inputtype="input" placeholder={"Street"} name={"street"} />
+        <Input inputtype="input" placeholder={"Zip"} name={"zip"} />
         <Button btnType={"Success"} clicked={this.orderHandler}>
           ORDER
         </Button>

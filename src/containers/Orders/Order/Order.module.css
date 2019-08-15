@@ -1,8 +1,26 @@
 .Order {
-  width: 100%;
+  width: 80%;
   border: 1px solid #eee;
   box-shadow: 0 2px 3px #ccc;
   padding: 10px;
   margin: 10px auto;
   box-sizing: border-box;
+}
+
+.Ingredient {
+  text-transform: capitalize;
+  display: block;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.OrderSide {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.BurgerSide {
+  width: 50%;
+  display: inline-block;
 }

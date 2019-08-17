@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
@@ -80,14 +81,12 @@ class ContactData extends Component {
         touched: false
       }
     },
-    totalPrice: 0,
     formIsValid: false,
     loading: false
   };
 
   orderHandler = event => {
     event.preventDefault();
-    c;
 
     this.setState({ loading: true });
 
@@ -98,7 +97,7 @@ class ContactData extends Component {
 
     const order = {
       ingredients: this.props.ingredients,
-      price: this.props.price,
+      price: this.props.totalPrice,
       orderData: formData
     };
     axios
@@ -191,4 +190,11 @@ class ContactData extends Component {
   }
 }
 
-export default withRouter(ContactData);
+const mapStateToProps = state => {
+  return {
+    ingredients: state.ingredients,
+    totalPrice: state.totalPrice
+  };
+};
+
+export default connect(mapStateToProps)(withRouter(ContactData));

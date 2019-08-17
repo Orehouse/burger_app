@@ -14,10 +14,12 @@ import axios from "../../axios-orders";
 
 class BurgerBuilder extends Component {
   state = {
-    purchasing: false,
-    loading: false,
-    error: false
+    purchasing: false
   };
+
+  componentDidMount() {
+    this.props.onInitIngredients();
+  }
 
   getPurchaseState(ingredients) {
     const sum = Object.keys(ingredients)
@@ -47,7 +49,7 @@ class BurgerBuilder extends Component {
     }
     let orderSummary = null;
 
-    let burger = this.state.error ? (
+    let burger = this.props.error ? (
       <p>Ingredients can not be loaded :( </p>
     ) : (
       <Spinner />
@@ -77,10 +79,6 @@ class BurgerBuilder extends Component {
       );
     }
 
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
-    }
-
     return (
       <Aux>
         <Modal
@@ -96,22 +94,23 @@ class BurgerBuilder extends Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    ingredients: state.ingredients,
-    totalPrice: state.totalPrice
+    return {
+      ingredients: state.ingredients,
+      totalPrice: state.totalPrice,
+      error: state.error
+    };
+  },
+  mapDispatchToProps = dispatch => {
+    return {
+      onIngredientAdded: ingredientName =>
+        dispatch(burgerBuilderActions.addIngredient(ingredientName)),
+      onIngredientRemoved: ingredientName =>
+        dispatch(burgerBuilderActions.removeIngredient(ingredientName)),
+      onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
+    };
   };
-};
-
-const mapDispathToProps = dispatch => {
-  return {
-    onIngredientAdded: ingredientName =>
-      dispatch(burgerBuilderActions.addIngredient(ingredientName)),
-    onIngredientRemoved: ingredientName =>
-      dispatch(burgerBuilderActions.removeIngredient(ingredientName))
-  };
-};
 
 export default connect(
   mapStateToProps,
-  mapDispathToProps
+  mapDispatchToProps
 )(withErrorHandler(BurgerBuilder, axios));

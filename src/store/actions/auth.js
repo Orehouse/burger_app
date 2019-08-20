@@ -17,8 +17,7 @@ export const authFail = error => ({
 });
 
 export const authLogout = () => {
-  localStorage.removeItem(localStorageConstants.TOKEN);
-  localStorage.removeItem(localStorageConstants.EXPIRATION_TIME);
+  removeAuthInfoFromLocalStorage();
   return { type: actionTypes.AUTH_LOGOUT };
 };
 
@@ -30,6 +29,35 @@ export const checkAuthTimeout = expirationTime => {
   };
 };
 
+function setAuthInfoToLocalstorage(expiresIn, token, userId) {
+  const expiresInMilliseconds = expiresIn * 1000;
+  const expirationTime = Date.now() + expiresInMilliseconds;
+  localStorage.setItem(localStorageConstants.TOKEN, token);
+  localStorage.setItem(localStorageConstants.EXPIRATION_TIME, expirationTime);
+  localStorage.setItem(localStorageConstants.USER_ID, userId);
+  return expiresInMilliseconds;
+}
+
+function removeAuthInfoFromLocalStorage() {
+  localStorage.removeItem(localStorageConstants.TOKEN);
+  localStorage.removeItem(localStorageConstants.EXPIRATION_TIME);
+  localStorage.removeItem(localStorageConstants.USER_ID);
+}
+
+function getAuthInfoFromLocalStorage() {
+  return {
+    [localStorageConstants.TOKEN]: localStorage.getItem(
+      localStorageConstants.TOKEN
+    ),
+    [localStorageConstants.USER_ID]: localStorage.getItem(
+      localStorageConstants.USER_ID
+    ),
+    [localStorageConstants.EXPIRATION_TIME]: localStorage.getItem(
+      localStorageConstants.EXPIRATION_TIME
+    )
+  };
+}
+
 export const auth = (email, password, method) => {
   return dispatch => {
     dispatch(authStart());
@@ -40,17 +68,17 @@ export const auth = (email, password, method) => {
         returnSecureToken: true
       })
       .then(response => {
-        const expiresInMilliseconds = parseInt(response.data.expiresIn) * 1000;
-        const expirationTime = Date.now() + expiresInMilliseconds;
-        localStorage.setItem(
-          localStorageConstants.TOKEN,
-          response.data.idToken
+        const userId = response.data.localId;
+        const token = response.data.idToken;
+        const expiresIn = parseInt(response.data.expiresIn);
+
+        const expiresInMilliseconds = setAuthInfoToLocalstorage(
+          expiresIn,
+          token,
+          userId
         );
-        localStorage.setItem(
-          localStorageConstants.EXPIRATION_TIME,
-          expirationTime
-        );
-        dispatch(authSuccess(response.data.idToken, response.data.localId));
+
+        dispatch(authSuccess(token, userId));
         dispatch(checkAuthTimeout(expiresInMilliseconds));
       })
       .catch(error => {
@@ -61,4 +89,19 @@ export const auth = (email, password, method) => {
 
 export const setAuthRedirectPath = path => {
   return { type: actionTypes.SET_AUTH_REDIRECT_PATH, path: path };
+};
+
+export const authCheckState = () => {
+  return dispatch => {
+    const { token, userId, expirationTime } = getAuthInfoFromLocalStorage();
+    if (!token || !expirationTime) {
+      dispatch(authLogout());
+    } else {
+      const timeLeftToExpire = expirationTime - Date.now();
+      if (timeLeftToExpire > 0) {
+        dispatch(authSuccess(token, userId));
+        dispatch(checkAuthTimeout(timeLeftToExpire));
+      }
+    }
+  };
 };

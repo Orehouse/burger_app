@@ -34,7 +34,6 @@ class Orders extends Component {
   }
 
   render() {
-    console.log(this.state.orders);
     const orders =
       this.state.orders.length > 0 ? (
         this.state.orders.map(order => (

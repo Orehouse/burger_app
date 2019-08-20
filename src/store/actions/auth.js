@@ -14,11 +14,11 @@ export const authFail = error => ({
   error: error
 });
 
-export const auth = (email, password) => {
+export const auth = (email, password, method) => {
   return dispatch => {
     dispatch(authStart());
     axios
-      .post(`accounts:signUp?key=${API_KEY}`, {
+      .post(`accounts:${method}?key=${API_KEY}`, {
         email,
         password,
         returnSecureToken: true

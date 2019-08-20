@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 import Input from "../../components/UI/Input/Input";
 import Button from "../../components/UI/Button/Button";
 
+import { SIGN_UP_METHOD, SIGN_IN_METHOD } from "../../config/config";
 import * as actions from "../../store/actions/index";
-import axios from "../../axios-auth";
 
 import classes from "./Auth.module.css";
 
@@ -34,7 +34,8 @@ class Auth extends Component {
         valid: false,
         touched: false
       }
-    }
+    },
+    isSignUp: true
   };
 
   checkValidity = (value, rules) => {
@@ -77,11 +78,16 @@ class Auth extends Component {
     this.setState({ controls: updatedControls });
   };
 
-  submitHandler = event => {
+  submitSignUpHandler = event => {
     event.preventDefault();
     const email = this.state.controls.email.value;
     const password = this.state.controls.password.value;
-    this.props.onAuth(email, password);
+    const method = this.state.isSignUp ? SIGN_UP_METHOD : SIGN_IN_METHOD;
+    this.props.onAuth(email, password, method);
+  };
+
+  switchAuthModeHandler = () => {
+    this.setState({ isSignUp: !this.state.isSignUp });
   };
 
   render() {
@@ -105,10 +111,15 @@ class Auth extends Component {
     ));
     return (
       <div className={classes.Auth}>
-        <form onSubmit={this.submitHandler}>
+        <form onSubmit={this.submitSignUpHandler}>
           {form}
-          <Button btnType={"Success"}>SUBMIT</Button>
+          <Button btnType={"Success"}>
+            {this.state.isSignUp ? "Sign Up" : "Sign In"}
+          </Button>
         </form>
+        <Button btnType={"Danger"} clicked={this.switchAuthModeHandler}>
+          {this.state.isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
+        </Button>
       </div>
     );
   }
@@ -116,7 +127,8 @@ class Auth extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAuth: (email, password) => dispatch(actions.auth(email, password))
+    onAuth: (email, password, method) =>
+      dispatch(actions.auth(email, password, method))
   };
 };
 

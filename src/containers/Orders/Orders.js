@@ -2,17 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import axios from "../../axios-orders";
-import * as actions from "../../store/actions/index";
 
 import Order from "./Order/Order";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import Spinner from "../../components/UI/Spinner/Spinner";
 
 class Orders extends Component {
-  componentDidMount() {
-    this.props.onFetchOrders();
-  }
-
   render() {
     const orders =
       this.props.orders.length > 0 ? (
@@ -27,18 +22,10 @@ class Orders extends Component {
 }
 
 const mapStateToProps = state => {
-    return {
-      orders: state.order.orders,
-      loading: state.order.loading
-    };
-  },
-  mapDispatchToProps = dispatch => {
-    return {
-      onFetchOrders: () => dispatch(actions.fetchOrders())
-    };
+  return {
+    orders: state.order.orders,
+    loading: state.order.loading
   };
+};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withErrorHandler(Orders, axios));
+export default connect(mapStateToProps)(withErrorHandler(Orders, axios));

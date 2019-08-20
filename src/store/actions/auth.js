@@ -1,5 +1,6 @@
 import { API_KEY } from "../../config/config";
 import * as actionTypes from "./actionTypes";
+import * as localStorageConstants from "../const/localStorage";
 import axios from "../../axios-auth";
 
 export const authStart = () => ({ type: actionTypes.AUTH_START });
@@ -15,7 +16,11 @@ export const authFail = error => ({
   error: error
 });
 
-export const authLogout = () => ({ type: actionTypes.AUTH_LOGOUT });
+export const authLogout = () => {
+  localStorage.removeItem(localStorageConstants.TOKEN);
+  localStorage.removeItem(localStorageConstants.EXPIRATION_TIME);
+  return { type: actionTypes.AUTH_LOGOUT };
+};
 
 export const checkAuthTimeout = expirationTime => {
   return dispatch => {
@@ -35,10 +40,17 @@ export const auth = (email, password, method) => {
         returnSecureToken: true
       })
       .then(response => {
-        console.log(response);
-        dispatch(authSuccess(response.data.idToken, response.data.localId));
-
         const expiresInMilliseconds = parseInt(response.data.expiresIn) * 1000;
+        const expirationTime = Date.now() + expiresInMilliseconds;
+        localStorage.setItem(
+          localStorageConstants.TOKEN,
+          response.data.idToken
+        );
+        localStorage.setItem(
+          localStorageConstants.EXPIRATION_TIME,
+          expirationTime
+        );
+        dispatch(authSuccess(response.data.idToken, response.data.localId));
         dispatch(checkAuthTimeout(expiresInMilliseconds));
       })
       .catch(error => {

@@ -83,8 +83,7 @@ class ContactData extends Component {
         touched: false
       }
     },
-    formIsValid: false,
-    loading: false
+    formIsValid: false
   };
 
   orderHandler = event => {
@@ -171,7 +170,7 @@ class ContactData extends Component {
         </Button>
       </form>
     );
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
     return (
@@ -186,13 +185,13 @@ class ContactData extends Component {
 const mapStateToProps = state => {
     return {
       ingredients: state.ingredients,
-      totalPrice: state.totalPrice
+      totalPrice: state.totalPrice,
+      loading: state.loading
     };
   },
   mapDispatchToProps = dispatch => {
     return {
-      onOrderBurger: orderData =>
-        dispatch(actions.purchaseBurgerStart(orderData))
+      onOrderBurger: orderData => dispatch(actions.purchaseBurger(orderData))
     };
   };
 

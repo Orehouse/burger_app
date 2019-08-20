@@ -4,9 +4,10 @@ import axios from "../../axios-auth";
 
 export const authStart = () => ({ type: actionTypes.AUTH_START });
 
-export const authSuccess = authData => ({
+export const authSuccess = (token, userId) => ({
   type: actionTypes.AUTH_SUCCESS,
-  authData: authData
+  token,
+  userId
 });
 
 export const authFail = error => ({
@@ -25,7 +26,7 @@ export const auth = (email, password, method) => {
       })
       .then(response => {
         console.log(response);
-        dispatch(authSuccess(response.data));
+        dispatch(authSuccess(response.data.idToken, response.data.localId));
       })
       .catch(error => {
         console.log(error);

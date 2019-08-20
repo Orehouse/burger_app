@@ -40,7 +40,7 @@ export const fetchOrdersStart = () => {
 };
 
 export const fetchOrdersSuccess = orders => {
-  return { type: actionTypes.PURCHASE_BURGER_SUCCESS, orders: orders };
+  return { type: actionTypes.FETCH_ORDERS_SUCCESS, orders: orders };
 };
 
 export const fetchOrdersFail = error => {

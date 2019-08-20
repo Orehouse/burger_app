@@ -1,4 +1,6 @@
+import { API_KEY } from "../../config/config";
 import * as actionTypes from "./actionTypes";
+import axios from "../../axios-auth";
 
 export const authStart = () => ({ type: actionTypes.AUTH_START });
 
@@ -13,5 +15,21 @@ export const authFail = error => ({
 });
 
 export const auth = (email, password) => {
-  return dispatch => dispatch(authStart());
+  return dispatch => {
+    dispatch(authStart());
+    axios
+      .post(`accounts:signUp?key=${API_KEY}`, {
+        email,
+        password,
+        returnSecureToken: true
+      })
+      .then(response => {
+        console.log(response);
+        dispatch(authSuccess(response.data));
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch(authFail(error));
+      });
+  };
 };

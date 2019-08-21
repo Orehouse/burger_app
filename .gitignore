@@ -24,3 +24,6 @@ yarn-error.log*
 
 .idea/
 src/config/config.js
+firebase.json
+.firebaserc
+.firebase/hosting.YnVpbGQ.cache

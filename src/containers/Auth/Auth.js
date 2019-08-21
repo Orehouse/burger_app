@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
 import { updateObject } from "../../shared/utility";
+import { checkValidity } from "../../shared/validation";
 
 import Input from "../../components/UI/Input/Input";
 import Button from "../../components/UI/Button/Button";
@@ -42,35 +43,11 @@ class Auth extends Component {
     isSignUp: false
   };
 
-  checkValidity = (value, rules) => {
-    let isValid = false;
-
-    if (rules.required) {
-      isValid = value.trim() !== "";
-    }
-
-    if (rules.minLength) {
-      isValid &= value.trim().length >= rules.minLength;
-    }
-
-    if (rules.maxLength) {
-      isValid &= value.trim().length <= rules.maxLength;
-    }
-
-    if (rules.isEmail) {
-      isValid &= new RegExp(
-        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-      ).test(value);
-    }
-
-    return !!isValid;
-  };
-
   inputChangedHandler = (event, controlName) => {
     const updatedControls = updateObject(this.state.controls, {
       [controlName]: updateObject(this.state.controls[controlName], {
         value: event.target.value,
-        valid: this.checkValidity(
+        valid: checkValidity(
           event.target.value,
           this.state.controls[controlName].validation
         ),

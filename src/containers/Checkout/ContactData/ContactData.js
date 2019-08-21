@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { updateObject } from "../../../shared/utility";
+import { checkValidity } from "../../../shared/validation";
 
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
@@ -106,30 +107,12 @@ class ContactData extends Component {
     this.props.onOrderBurger(order, this.props.authToken);
   };
 
-  checkValidity = (value, rules) => {
-    let isValid = false;
-
-    if (rules.required) {
-      isValid = value.trim() !== "";
-    }
-
-    if (rules.minLength) {
-      isValid &= value.trim().length >= rules.minLength;
-    }
-
-    if (rules.maxLength) {
-      isValid &= value.trim().length <= rules.maxLength;
-    }
-
-    return !!isValid;
-  };
-
   inputChangedHandler = (event, inputIdentifier) => {
     const updatedFormElement = updateObject(
       this.state.orderForm[inputIdentifier],
       {
         value: event.target.value,
-        valid: this.checkValidity(
+        valid: checkValidity(
           event.target.value,
           this.state.orderForm[inputIdentifier].validation
         ),
